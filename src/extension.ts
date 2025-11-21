@@ -449,7 +449,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     const sshExplorerProvider = new SSHExplorerProvider(context);
 
-    vscode.window.registerTreeDataProvider('sshExplorer', sshExplorerProvider);
+    // Create TreeView to enable collapse functionality
+    const treeView = vscode.window.createTreeView('sshExplorer', {
+        treeDataProvider: sshExplorerProvider,
+        showCollapseAll: true
+    });
 
     // Register WebView provider
     const webviewProvider = new SSHWebViewProvider(context.extensionUri, context);
@@ -538,11 +542,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('sshFileManager.collapseAll', async () => {
-            // Collapse all connections by refreshing the tree
-            // This will reset all expanded states
+        vscode.commands.registerCommand('sshFileManager.collapseAll', () => {
+            // Refresh the tree to collapse all items
             sshExplorerProvider.refresh();
-            vscode.window.showInformationMessage('🔽 All items collapsed');
         })
     );
 

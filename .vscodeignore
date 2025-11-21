@@ -1,0 +1,18 @@
+# Exclude development files
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+tsconfig.json
+*.vsix
+
+# Exclude node_modules except production dependencies
+node_modules/**/test/**
+node_modules/**/tests/**
+node_modules/**/*.md
+node_modules/**/.npmignore
+node_modules/**/LICENSE
+node_modules/**/CHANGELOG.md
+
+# Keep only compiled output
+!out/**

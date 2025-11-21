@@ -1,111 +1,134 @@
-# VS Code SSH File Manager Extension - Exemplo
+# SSH File Manager
 
-Esta é uma extensão de exemplo para VS Code que demonstra como criar um gerenciador de arquivos SSH/SFTP similar ao BitVise ou FileZilla, integrado diretamente no editor.
+A powerful SSH/SFTP file manager extension for VS Code and Antigravity. Manage remote servers, browse files, edit remotely, and open integrated terminals - all without leaving your editor.
 
-## Funcionalidades
+## ✨ Features
 
-- 🔌 **Gerenciamento de Conexões SSH**: Adicione e gerencie múltiplas conexões SSH
-- 📁 **Explorador de Arquivos Remoto**: Navegue pelos arquivos no servidor remoto através de uma TreeView
-- 💻 **Terminal SSH Integrado**: Abra terminais SSH diretamente no VS Code
-- 🔐 **Autenticação**: Suporte para senha ou chave privada
-- ⬆️⬇️ **Transferência de Arquivos**: Upload e download de arquivos (em desenvolvimento)
+### 🔌 Connection Management
+- **Visual Connection Manager**: Modern WebView UI for adding and managing SSH connections
+- **Multiple Connections**: Save and manage unlimited SSH connections
+- **Flexible Authentication**: Support for password and private key authentication
+- **Quick Connect**: One-click connection to your servers
 
-## Como Usar
+### 📁 Remote File Browser
+- **Tree View Explorer**: Browse remote files and folders in a familiar tree structure
+- **Colored File Icons**: 40+ file types with color-coded icons (JS, Python, C++, Lua, etc.)
+- **Smart Sorting**: Folders first, then files - all alphabetically organized
+- **Double-Click to Open**: Instantly open remote files for editing
 
-### 1. Instalação das Dependências
+### ✏️ Remote File Editing
+- **Auto-Sync**: Automatic synchronization when you save files (Cmd+S / Ctrl+S)
+- **Live Editing**: Edit remote files as if they were local
+- **Real-time Feedback**: Visual notifications for sync status
 
-```bash
-cd vscode-ssh-extension-example
-npm install
-```
+### 💻 Integrated Terminal
+- **SSH Terminal**: Open SSH terminals directly in VS Code
+- **Multiple Sessions**: Run multiple terminal sessions simultaneously
+- **Full Terminal Support**: Complete SSH terminal functionality
 
-### 2. Compilar a Extensão
+### 🎨 Beautiful UI
+- **Modern Design**: Clean, professional interface
+- **Theme Integration**: Automatically adapts to VS Code light/dark themes
+- **Intuitive Icons**: Clear visual indicators for all file types and actions
+- **Collapse All**: Quickly collapse all expanded folders
 
-```bash
-npm run compile
-```
+## 🚀 Quick Start
 
-### 3. Testar a Extensão
+1. **Install the extension**
+2. **Open SSH Manager**: Click the SSH icon in the Activity Bar
+3. **Add Connection**: Click the "+" button or use "SSH: Add Connection" command
+4. **Connect**: Click the connect button on your saved connection
+5. **Browse & Edit**: Navigate files and double-click to edit
 
-1. Abra a pasta `vscode-ssh-extension-example` no VS Code
-2. Pressione `F5` para abrir uma nova janela do VS Code com a extensão carregada
-3. Na barra lateral, você verá uma nova view chamada "SSH Connections"
+## 📋 Requirements
 
-### 4. Adicionar uma Conexão SSH
+- VS Code 1.85.0 or higher (or Antigravity)
+- SSH access to remote servers
+- Node.js (for extension development)
 
-1. Clique no ícone `+` na view "SSH Connections"
-2. Preencha os dados:
-   - Nome da conexão
-   - Host (endereço do servidor)
-   - Porta (padrão: 22)
-   - Username
-   - Método de autenticação (Senha ou Chave Privada)
+## 🎯 Usage
 
-### 5. Conectar e Usar
+### Adding a Connection
 
-- Clique no ícone de conexão para conectar ao servidor
-- Navegue pelos arquivos remotos
-- Clique no ícone de terminal para abrir um terminal SSH
+1. Click the **+** button in the SSH Manager sidebar
+2. Fill in connection details:
+   - **Name**: A friendly name for this connection
+   - **Host**: Server address (IP or domain)
+   - **Port**: SSH port (default: 22)
+   - **Username**: Your SSH username
+   - **Authentication**: Choose password or private key
 
-## Estrutura do Projeto
+### Editing Remote Files
 
-```
-vscode-ssh-extension-example/
-├── package.json          # Manifesto da extensão
-├── tsconfig.json         # Configuração TypeScript
-├── src/
-│   └── extension.ts      # Código principal da extensão
-└── README.md            # Este arquivo
-```
+1. Connect to a server
+2. Browse to your file
+3. **Double-click** to open
+4. Edit the file
+5. **Save** (Cmd+S / Ctrl+S) - changes sync automatically!
+6. See "✅ Synced to remote" confirmation
 
-## Principais Componentes
+### Opening Terminal
 
-### 1. TreeDataProvider (`SSHExplorerProvider`)
-Gerencia a visualização em árvore das conexões e arquivos remotos.
+- Click the terminal icon on any connection
+- Or right-click connection → "Open Terminal"
 
-### 2. Comandos Registrados
-- `sshFileManager.addConnection` - Adicionar nova conexão
-- `sshFileManager.connect` - Conectar ao servidor
-- `sshFileManager.disconnect` - Desconectar
-- `sshFileManager.openTerminal` - Abrir terminal SSH
-- `sshFileManager.uploadFile` - Upload de arquivo
-- `sshFileManager.downloadFile` - Download de arquivo
+## ⌨️ Commands
 
-### 3. Bibliotecas Utilizadas
-- **ssh2**: Cliente SSH para Node.js
-- **ssh2-sftp-client**: Cliente SFTP construído sobre ssh2
+- `SSH: Add Connection` - Add new SSH connection
+- `SSH: Open UI` - Open connection manager UI
+- `SSH: Refresh` - Refresh file tree
+- `SSH: Collapse All` - Collapse all folders
+- `SSH: Open Terminal` - Open SSH terminal
+- `SSH: Disconnect` - Disconnect from server
 
-## Próximos Passos para Melhorar
+## 🎨 File Type Icons
 
-1. **Implementar Upload/Download**: Completar as funções de transferência de arquivos
-2. **Edição Remota**: Permitir editar arquivos remotos diretamente
-3. **Sincronização**: Sincronizar pastas locais com remotas
-4. **Gerenciamento de Chaves**: Interface melhor para gerenciar chaves SSH
-5. **Histórico de Comandos**: Salvar histórico de comandos do terminal
-6. **Favoritos**: Marcar diretórios remotos como favoritos
+Supports colored icons for:
+- **Languages**: JavaScript, TypeScript, Python, C/C++, Lua, Java, Go, Rust, PHP, Ruby
+- **Web**: HTML, CSS, SCSS, SASS
+- **Config**: JSON, YAML, XML, TOML, ENV
+- **Documents**: Markdown, TXT, PDF
+- **Images**: PNG, JPG, SVG, GIF
+- **Archives**: ZIP, TAR, GZ, RAR
+- **Shell**: SH, BASH, ZSH
+- **Database**: SQL, SQLite
+- And many more!
 
-## Publicar a Extensão
+## 🔧 Extension Settings
 
-Para publicar no VS Code Marketplace:
+This extension stores connection data in VS Code's global state. No additional configuration required!
 
-```bash
-# Instalar vsce
-npm install -g @vscode/vsce
+## 🐛 Known Issues
 
-# Criar pacote
-vsce package
+- Large file transfers may take time (working on progress indicators)
+- Some SFTP servers may have compatibility issues
 
-# Publicar (requer conta no marketplace)
-vsce publish
-```
+## 📝 Release Notes
 
-## Recursos Adicionais
+### 0.0.1 (Initial Release)
 
-- [VS Code Extension API](https://code.visualstudio.com/api)
-- [TreeView Guide](https://code.visualstudio.com/api/extension-guides/tree-view)
-- [Terminal API](https://code.visualstudio.com/api/references/vscode-api#Terminal)
-- [ssh2 Documentation](https://github.com/mscdex/ssh2)
+- ✅ SSH/SFTP connection management
+- ✅ Remote file browser with colored icons
+- ✅ Auto-sync remote file editing
+- ✅ Integrated SSH terminal
+- ✅ Modern WebView UI
+- ✅ Alphabetical file sorting
+- ✅ Collapse all functionality
 
-## Licença
+## 🤝 Contributing
 
-MIT
+Found a bug or have a feature request? Please open an issue on our [GitHub repository](https://github.com/pedrogiampietro/vscode-ssh-extension).
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details
+
+## 🙏 Acknowledgments
+
+Built with:
+- [ssh2](https://github.com/mscdex/ssh2) - SSH2 client for Node.js
+- [ssh2-sftp-client](https://github.com/theophilusx/ssh2-sftp-client) - SFTP client
+
+---
+
+**Enjoy managing your remote servers!** 🚀
