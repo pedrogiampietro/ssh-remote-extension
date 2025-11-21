@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+    <title>SSH Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--vscode-font-family);
+            font-size: var(--vscode-font-size);
+            color: var(--vscode-foreground);
+            background-color: var(--vscode-editor-background);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--vscode-foreground);
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--vscode-foreground);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Styles */
+        .form-card {
+            background: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--vscode-foreground);
+            font-size: 13px;
+        }
+
+        .form-label .required {
+            color: var(--vscode-errorForeground);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: var(--vscode-descriptionForeground);
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            padding-left: 36px;
+            background: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 4px;
+            font-family: var(--vscode-font-family);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vscode-focusBorder);
+            box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+        }
+
+        .form-input.error {
+            border-color: var(--vscode-inputValidation-errorBorder);
+        }
+
+        .error-message {
+            color: var(--vscode-errorForeground);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Buttons */
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--vscode-font-family);
+        }
+
+        .button-primary {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+        }
+
+        .button-primary:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+
+        .button-secondary {
+            background: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+        }
+
+        .button-secondary:hover {
+            background: var(--vscode-button-secondaryHoverBackground);
+        }
+
+        .button-danger {
+            background: var(--vscode-errorForeground);
+            color: white;
+        }
+
+        .button-danger:hover {
+            opacity: 0.9;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Connection Cards */
+        .connections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .connection-card {
+            background: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .connection-card:hover {
+            border-color: var(--vscode-focusBorder);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .connection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .connection-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--vscode-foreground);
+        }
+
+        .connection-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--vscode-descriptionForeground);
+        }
+
+        .connection-status.connected {
+            background: var(--vscode-testing-iconPassed);
+        }
+
+        .connection-details {
+            margin-bottom: 16px;
+        }
+
+        .connection-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--vscode-descriptionForeground);
+        }
+
+        .connection-detail-icon {
+            width: 16px;
+            color: var(--vscode-descriptionForeground);
+        }
+
+        .connection-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+        }
+
+        .action-button:hover {
+            background: var(--vscode-button-secondaryHoverBackground);
+        }
+
+        .action-button.primary {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+        }
+
+        .action-button.primary:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+
+        .action-button.danger {
+            background: transparent;
+            color: var(--vscode-errorForeground);
+            border: 1px solid var(--vscode-errorForeground);
+        }
+
+        .action-button.danger:hover {
+            background: var(--vscode-errorForeground);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--vscode-descriptionForeground);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .connection-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 SSH Connection Manager</h1>
+
+        <!-- Add/Edit Connection Form -->
+        <div class="section">
+            <div class="section-title">
+                <span id="form-title">➕ Add New Connection</span>
+            </div>
+            <div class="form-card">
+                <form id="connection-form">
+                    <input type="hidden" id="edit-index" value="">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="connection-name">
+                            Connection Name <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📝</span>
+                            <input type="text" id="connection-name" class="form-input" placeholder="e.g., Production Server" required>
+                        </div>
+                        <div class="error-message" id="name-error">Connection name is required</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="host">
+                            Host <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🌐</span>
+                            <input type="text" id="host" class="form-input" placeholder="e.g., 192.168.1.100 or server.com" required>
+                        </div>
+                        <div class="error-message" id="host-error">Host is required</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="port">
+                            Port <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔌</span>
+                            <input type="number" id="port" class="form-input" value="22" min="1" max="65535" required>
+                        </div>
+                        <div class="error-message" id="port-error">Port must be between 1 and 65535</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="username">
+                            Username <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="username" class="form-input" placeholder="e.g., root or ubuntu" required>
+                        </div>
+                        <div class="error-message" id="username-error">Username is required</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Authentication Method <span class="required">*</span>
+                        </label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="auth-password" name="auth-method" value="password" checked>
+                                <label for="auth-password">🔑 Password</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="auth-key" name="auth-method" value="key">
+                                <label for="auth-key">🔐 Private Key</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="password-group">
+                        <label class="form-label" for="password">
+                            Password
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" class="form-input" placeholder="Enter password">
+                        </div>
+                    </div>
+
+                    <div class="form-group hidden" id="key-group">
+                        <label class="form-label" for="private-key">
+                            Private Key Path
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔐</span>
+                            <input type="text" id="private-key" class="form-input" placeholder="Path to private key file">
+                        </div>
+                        <button type="button" class="button button-secondary" id="browse-key" style="margin-top: 8px;">
+                            Browse...
+                        </button>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="button button-primary" id="save-button">
+                            💾 Save Connection
+                        </button>
+                        <button type="button" class="button button-secondary" id="cancel-button" class="hidden">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Connections List -->
+        <div class="section">
+            <div class="section-title">
+                <span>📋 Saved Connections</span>
+            </div>
+            <div id="connections-container">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-text">No connections yet. Add your first SSH connection above!</div>
+                </div>
+                <div class="connections-grid hidden" id="connections-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+
+        // DOM Elements
+        const form = document.getElementById('connection-form');
+        const formTitle = document.getElementById('form-title');
+        const editIndex = document.getElementById('edit-index');
+        const saveButton = document.getElementById('save-button');
+        const cancelButton = document.getElementById('cancel-button');
+        const connectionsGrid = document.getElementById('connections-grid');
+        const emptyState = document.getElementById('empty-state');
+        const passwordGroup = document.getElementById('password-group');
+        const keyGroup = document.getElementById('key-group');
+        const authPasswordRadio = document.getElementById('auth-password');
+        const authKeyRadio = document.getElementById('auth-key');
+        const browseKeyButton = document.getElementById('browse-key');
+
+        // State
+        let connections = [];
+        let editingIndex = -1;
+
+        // Auth method toggle
+        authPasswordRadio.addEventListener('change', () => {
+            passwordGroup.classList.remove('hidden');
+            keyGroup.classList.add('hidden');
+        });
+
+        authKeyRadio.addEventListener('change', () => {
+            passwordGroup.classList.add('hidden');
+            keyGroup.classList.remove('hidden');
+        });
+
+        // Browse key file
+        browseKeyButton.addEventListener('click', () => {
+            vscode.postMessage({ type: 'browseKey' });
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            const connection = {
+                name: document.getElementById('connection-name').value,
+                host: document.getElementById('host').value,
+                port: parseInt(document.getElementById('port').value),
+                username: document.getElementById('username').value,
+                authMethod: document.querySelector('input[name="auth-method"]:checked').value,
+                password: document.getElementById('password').value,
+                privateKey: document.getElementById('private-key').value
+            };
+
+            if (editingIndex >= 0) {
+                vscode.postMessage({ type: 'updateConnection', index: editingIndex, connection });
+            } else {
+                vscode.postMessage({ type: 'addConnection', connection });
+            }
+
+            resetForm();
+        });
+
+        // Cancel edit
+        cancelButton.addEventListener('click', resetForm);
+
+        // Validation
+        function validateForm() {
+            let isValid = true;
+            
+            const name = document.getElementById('connection-name');
+            const host = document.getElementById('host');
+            const port = document.getElementById('port');
+            const username = document.getElementById('username');
+
+            if (!name.value.trim()) {
+                showError('name-error', name);
+                isValid = false;
+            } else {
+                hideError('name-error', name);
+            }
+
+            if (!host.value.trim()) {
+                showError('host-error', host);
+                isValid = false;
+            } else {
+                hideError('host-error', host);
+            }
+
+            const portValue = parseInt(port.value);
+            if (!portValue || portValue < 1 || portValue > 65535) {
+                showError('port-error', port);
+                isValid = false;
+            } else {
+                hideError('port-error', port);
+            }
+
+            if (!username.value.trim()) {
+                showError('username-error', username);
+                isValid = false;
+            } else {
+                hideError('username-error', username);
+            }
+
+            return isValid;
+        }
+
+        function showError(errorId, input) {
+            document.getElementById(errorId).classList.add('show');
+            input.classList.add('error');
+        }
+
+        function hideError(errorId, input) {
+            document.getElementById(errorId).classList.remove('show');
+            input.classList.remove('error');
+        }
+
+        // Reset form
+        function resetForm() {
+            form.reset();
+            editingIndex = -1;
+            editIndex.value = '';
+            formTitle.textContent = '➕ Add New Connection';
+            saveButton.textContent = '💾 Save Connection';
+            cancelButton.classList.add('hidden');
+            document.getElementById('port').value = '22';
+            passwordGroup.classList.remove('hidden');
+            keyGroup.classList.add('hidden');
+            
+            // Clear errors
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+        }
+
+        // Edit connection
+        function editConnection(index) {
+            const conn = connections[index];
+            editingIndex = index;
+            editIndex.value = index;
+            
+            document.getElementById('connection-name').value = conn.name;
+            document.getElementById('host').value = conn.host;
+            document.getElementById('port').value = conn.port;
+            document.getElementById('username').value = conn.username;
+            
+            if (conn.password) {
+                authPasswordRadio.checked = true;
+                document.getElementById('password').value = conn.password;
+                passwordGroup.classList.remove('hidden');
+                keyGroup.classList.add('hidden');
+            } else if (conn.privateKey) {
+                authKeyRadio.checked = true;
+                document.getElementById('private-key').value = conn.privateKey;
+                passwordGroup.classList.add('hidden');
+                keyGroup.classList.remove('hidden');
+            }
+            
+            formTitle.textContent = '✏️ Edit Connection';
+            saveButton.textContent = '💾 Update Connection';
+            cancelButton.classList.remove('hidden');
+            
+            // Scroll to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete connection
+        function deleteConnection(index) {
+            vscode.postMessage({ type: 'deleteConnection', index });
+        }
+
+        // Connect
+        function connect(index) {
+            vscode.postMessage({ type: 'connect', index });
+        }
+
+        // Open terminal
+        function openTerminal(index) {
+            vscode.postMessage({ type: 'openTerminal', index });
+        }
+
+        // Render connections
+        function renderConnections() {
+            if (connections.length === 0) {
+                emptyState.classList.remove('hidden');
+                connectionsGrid.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            connectionsGrid.classList.remove('hidden');
+            
+            connectionsGrid.innerHTML = connections.map((conn, index) => `
+                <div class="connection-card">
+                    <div class="connection-header">
+                        <div class="connection-name">${conn.name}</div>
+                        <div class="connection-status"></div>
+                    </div>
+                    <div class="connection-details">
+                        <div class="connection-detail">
+                            <span class="connection-detail-icon">🌐</span>
+                            <span>${conn.host}:${conn.port}</span>
+                        </div>
+                        <div class="connection-detail">
+                            <span class="connection-detail-icon">👤</span>
+                            <span>${conn.username}</span>
+                        </div>
+                        <div class="connection-detail">
+                            <span class="connection-detail-icon">${conn.password ? '🔑' : '🔐'}</span>
+                            <span>${conn.password ? 'Password' : 'Private Key'}</span>
+                        </div>
+                    </div>
+                    <div class="connection-actions">
+                        <button class="action-button primary" onclick="connect(${index})">
+                            🔌 Connect
+                        </button>
+                        <button class="action-button" onclick="openTerminal(${index})">
+                            💻 Terminal
+                        </button>
+                        <button class="action-button" onclick="editConnection(${index})">
+                            ✏️ Edit
+                        </button>
+                        <button class="action-button danger" onclick="deleteConnection(${index})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle messages from extension
+        window.addEventListener('message', event => {
+            const message = event.data;
+            
+            switch (message.type) {
+                case 'setConnections':
+                    connections = message.connections;
+                    renderConnections();
+                    break;
+                case 'keyPath':
+                    document.getElementById('private-key').value = message.path;
+                    break;
+            }
+        });
+
+        // Request initial connections
+        vscode.postMessage({ type: 'ready' });
+    </script>
+</body>
+</html>
