@@ -179,13 +179,26 @@ class SSHExplorerProvider implements vscode.TreeDataProvider<SSHTreeItem> {
 
     private connections: SSHConnection[] = [];
     private sftpClients: Map<string, SFTPClient> = new Map();
+    private activeConnections: Set<string> = new Set();
 
     constructor(private context: vscode.ExtensionContext) {
         this.loadConnections();
+        this.loadActiveConnections();
     }
 
     refresh(): void {
+        this.loadConnections(); // Reload connections from storage
         this._onDidChangeTreeData.fire();
+    }
+
+    addActiveConnection(name: string): void {
+        this.activeConnections.add(name);
+        this.saveActiveConnections();
+    }
+
+    removeActiveConnection(name: string): void {
+        this.activeConnections.delete(name);
+        this.saveActiveConnections();
     }
 
     getTreeItem(element: SSHTreeItem): vscode.TreeItem {
@@ -196,7 +209,7 @@ class SSHExplorerProvider implements vscode.TreeDataProvider<SSHTreeItem> {
         if (!element) {
             // Root level - show connections
             return this.connections.map(conn =>
-                new SSHTreeItem(conn.name, vscode.TreeItemCollapsibleState.Collapsed, conn)
+                new SSHTreeItem(conn.name, this.activeConnections.has(conn.name) ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed, conn)
             );
         } else if (element.connection && !element.remotePath) {
             // Show root directory of connection
@@ -379,6 +392,8 @@ class SSHExplorerProvider implements vscode.TreeDataProvider<SSHTreeItem> {
             await client.end();
             this.sftpClients.delete(key);
         }
+        this.removeActiveConnection(connection.name);
+        this.refresh();
         vscode.window.showInformationMessage(`Disconnected from ${connection.name}`);
     }
 
@@ -442,6 +457,15 @@ class SSHExplorerProvider implements vscode.TreeDataProvider<SSHTreeItem> {
     private saveConnections(): void {
         this.context.globalState.update('sshConnections', this.connections);
     }
+
+    private loadActiveConnections(): void {
+        const saved = this.context.globalState.get<string[]>('activeConnections', []);
+        this.activeConnections = new Set(saved);
+    }
+
+    private saveActiveConnections(): void {
+        this.context.globalState.update('activeConnections', Array.from(this.activeConnections));
+    }
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -486,8 +510,9 @@ export function activate(context: vscode.ExtensionContext) {
                 await sftp.end();
                 vscode.window.showInformationMessage(`✅ Successfully connected to ${connection.name}!`);
 
-                // Refresh the tree view to show the connection
-                vscode.commands.executeCommand('sshFileManager.refresh');
+                // Mark as active and refresh the tree view
+                sshExplorerProvider.addActiveConnection(connection.name);
+                sshExplorerProvider.refresh();
             } catch (error) {
                 vscode.window.showErrorMessage(`❌ Failed to connect to ${connection.name}: ${error}`);
             }

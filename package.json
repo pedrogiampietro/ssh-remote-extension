@@ -1,211 +1,213 @@
 {
-    "name": "ssh-file-manager",
-    "displayName": "SSH File Manager",
-    "description": "Powerful SSH/SFTP file manager with remote editing, colored icons, and integrated terminal",
-    "version": "0.0.1",
-    "publisher": "pedrogiampietro",
-    "license": "MIT",
-    "icon": "icon.png",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pedrogiampietro/vscode-ssh-extension"
-    },
-    "engines": {
-        "vscode": "^1.80.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "keywords": [
-        "ssh",
-        "sftp",
-        "remote",
-        "file manager",
-        "terminal",
-        "server",
-        "ftp"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "ssh-manager",
-                    "title": "SSH Manager",
-                    "icon": "resources/ssh-icon.svg"
-                }
-            ]
-        },
-        "commands": [
-            {
-                "command": "sshFileManager.openUI",
-                "title": "SSH: Open Manager UI",
-                "icon": "$(window)"
-            },
-            {
-                "command": "sshFileManager.addConnection",
-                "title": "SSH: Add Connection",
-                "icon": "$(add)"
-            },
-            {
-                "command": "sshFileManager.editConnection",
-                "title": "SSH: Edit Connection",
-                "icon": "$(edit)"
-            },
-            {
-                "command": "sshFileManager.deleteConnection",
-                "title": "SSH: Delete Connection",
-                "icon": "$(trash)"
-            },
-            {
-                "command": "sshFileManager.connect",
-                "title": "SSH: Connect",
-                "icon": "$(plug)"
-            },
-            {
-                "command": "sshFileManager.disconnect",
-                "title": "SSH: Disconnect",
-                "icon": "$(debug-disconnect)"
-            },
-            {
-                "command": "sshFileManager.refresh",
-                "title": "SSH: Refresh",
-                "icon": "$(refresh)"
-            },
-            {
-                "command": "sshFileManager.collapseAll",
-                "title": "SSH: Collapse All",
-                "icon": "$(collapse-all)"
-            },
-            {
-                "command": "sshFileManager.uploadFile",
-                "title": "SSH: Upload File",
-                "icon": "$(cloud-upload)"
-            },
-            {
-                "command": "sshFileManager.downloadFile",
-                "title": "SSH: Download File",
-                "icon": "$(cloud-download)"
-            },
-            {
-                "command": "sshFileManager.openTerminal",
-                "title": "SSH: Open Terminal",
-                "icon": "$(terminal)"
-            },
-            {
-                "command": "sshFileManager.openFile",
-                "title": "SSH: Open Remote File",
-                "icon": "$(file)"
-            }
-        ],
-        "views": {
-            "ssh-manager": [
-                {
-                    "id": "sshExplorer",
-                    "name": "Connections",
-                    "icon": "$(server)",
-                    "contextualTitle": "SSH Connections"
-                }
-            ]
-        },
-        "menus": {
-            "view/title": [
-                {
-                    "command": "sshFileManager.addConnection",
-                    "when": "view == sshExplorer",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "sshFileManager.refresh",
-                    "when": "view == sshExplorer",
-                    "group": "navigation@2"
-                },
-                {
-                    "command": "sshFileManager.collapseAll",
-                    "when": "view == sshExplorer",
-                    "group": "navigation@3"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "sshFileManager.connect",
-                    "when": "view == sshExplorer && viewItem == connection",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "sshFileManager.openTerminal",
-                    "when": "view == sshExplorer && viewItem == connection",
-                    "group": "inline@2"
-                },
-                {
-                    "command": "sshFileManager.editConnection",
-                    "when": "view == sshExplorer && viewItem == connection",
-                    "group": "1_manage@1"
-                },
-                {
-                    "command": "sshFileManager.deleteConnection",
-                    "when": "view == sshExplorer && viewItem == connection",
-                    "group": "1_manage@2"
-                },
-                {
-                    "command": "sshFileManager.disconnect",
-                    "when": "view == sshExplorer && viewItem == connection",
-                    "group": "2_actions@1"
-                },
-                {
-                    "command": "sshFileManager.downloadFile",
-                    "when": "view == sshExplorer && viewItem == file",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "sshFileManager.openFile",
-                    "when": "view == sshExplorer && viewItem == file",
-                    "group": "1_actions@1"
-                },
-                {
-                    "command": "sshFileManager.downloadFile",
-                    "when": "view == sshExplorer && viewItem == directory",
-                    "group": "1_actions@1"
-                }
-            ],
-            "commandPalette": [
-                {
-                    "command": "sshFileManager.addConnection"
-                },
-                {
-                    "command": "sshFileManager.refresh"
-                }
-            ]
-        },
-        "configuration": {
-            "title": "SSH File Manager",
-            "properties": {
-                "sshFileManager.connections": {
-                    "type": "array",
-                    "default": [],
-                    "description": "Lista de conexões SSH salvas"
-                }
-            }
+  "name": "ssh-file-manager",
+  "displayName": "SSH File Manager",
+  "description": "Powerful SSH/SFTP file manager with remote editing, colored icons, and integrated terminal",
+  "version": "0.0.2",
+  "publisher": "pedrogiampietro",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedrogiampietro/vscode-ssh-extension"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "ssh",
+    "sftp",
+    "remote",
+    "file manager",
+    "terminal",
+    "server",
+    "ftp"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ssh-manager",
+          "title": "SSH Manager",
+          "icon": "resources/ssh-icon.svg"
         }
+      ]
     },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "pretest": "npm run compile && npm run lint",
-        "lint": "eslint src --ext ts"
+    "commands": [
+      {
+        "command": "sshFileManager.openUI",
+        "title": "SSH: Open Manager UI",
+        "icon": "$(window)"
+      },
+      {
+        "command": "sshFileManager.addConnection",
+        "title": "SSH: Add Connection",
+        "icon": "$(add)"
+      },
+      {
+        "command": "sshFileManager.editConnection",
+        "title": "SSH: Edit Connection",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "sshFileManager.deleteConnection",
+        "title": "SSH: Delete Connection",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "sshFileManager.connect",
+        "title": "SSH: Connect",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "sshFileManager.disconnect",
+        "title": "SSH: Disconnect",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "sshFileManager.refresh",
+        "title": "SSH: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "sshFileManager.collapseAll",
+        "title": "SSH: Collapse All",
+        "icon": "$(collapse-all)"
+      },
+      {
+        "command": "sshFileManager.uploadFile",
+        "title": "SSH: Upload File",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "sshFileManager.downloadFile",
+        "title": "SSH: Download File",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "sshFileManager.openTerminal",
+        "title": "SSH: Open Terminal",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "sshFileManager.openFile",
+        "title": "SSH: Open Remote File",
+        "icon": "$(file)"
+      }
+    ],
+    "views": {
+      "ssh-manager": [
+        {
+          "id": "sshExplorer",
+          "name": "Connections",
+          "icon": "$(server)",
+          "contextualTitle": "SSH Connections"
+        }
+      ]
     },
-    "devDependencies": {
-        "@types/node": "^18.x",
-        "@types/ssh2": "^1.15.5",
-        "@types/vscode": "^1.80.0",
-        "@typescript-eslint/eslint-plugin": "^6.0.0",
-        "@typescript-eslint/parser": "^6.0.0",
-        "eslint": "^8.40.0",
-        "typescript": "^5.1.3"
+    "menus": {
+      "view/title": [
+        {
+          "command": "sshFileManager.addConnection",
+          "when": "view == sshExplorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "sshFileManager.refresh",
+          "when": "view == sshExplorer",
+          "group": "navigation@2"
+        },
+        {
+          "command": "sshFileManager.collapseAll",
+          "when": "view == sshExplorer",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sshFileManager.connect",
+          "when": "view == sshExplorer && viewItem == connection",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshFileManager.openTerminal",
+          "when": "view == sshExplorer && viewItem == connection",
+          "group": "inline@2"
+        },
+        {
+          "command": "sshFileManager.editConnection",
+          "when": "view == sshExplorer && viewItem == connection",
+          "group": "1_manage@1"
+        },
+        {
+          "command": "sshFileManager.deleteConnection",
+          "when": "view == sshExplorer && viewItem == connection",
+          "group": "1_manage@2"
+        },
+        {
+          "command": "sshFileManager.disconnect",
+          "when": "view == sshExplorer && viewItem == connection",
+          "group": "2_actions@1"
+        },
+        {
+          "command": "sshFileManager.downloadFile",
+          "when": "view == sshExplorer && viewItem == file",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshFileManager.openFile",
+          "when": "view == sshExplorer && viewItem == file",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "sshFileManager.downloadFile",
+          "when": "view == sshExplorer && viewItem == directory",
+          "group": "1_actions@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "sshFileManager.addConnection"
+        },
+        {
+          "command": "sshFileManager.refresh"
+        }
+      ]
     },
-    "dependencies": {
-        "ssh2": "^1.14.0",
-        "ssh2-sftp-client": "^9.1.0"
+    "configuration": {
+      "title": "SSH File Manager",
+      "properties": {
+        "sshFileManager.connections": {
+          "type": "array",
+          "default": [],
+          "description": "Lista de conexões SSH salvas"
+        }
+      }
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^18.x",
+    "@types/ssh2": "^1.15.5",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.40.0",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "ssh2": "^1.14.0",
+    "ssh2-sftp-client": "^9.1.0"
+  }
 }
